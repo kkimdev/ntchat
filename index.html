@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang='en' style='height:100%'>
+<head><title>Never Trust Chat</title></head>
+
+<body style='display:flex; flex-direction:column; height:100%; margin:0'>
+    <div><h1>Never Trust Chat</h1></div>
+    <textarea id='output' style='flex-grow:1; resize:none' readonly></textarea>
+    <textarea id='input' style='resize:none' rows='3'></textarea>
+
+    <script>
+        function print(str) {
+            const newLine = `[${new Date().toLocaleTimeString()}] ${str}\r\n`;
+            document.getElementById('output').append(newLine);
+        }
+
+        async function runHost(connection) {
+            print('Initializing...');
+            const dataChannel = connection.createDataChannel(null);
+            dataChannel.onopen = event => onConnectionEstablished(dataChannel);
+            connection.setLocalDescription(await connection.createOffer());
+            connection.onicecandidate = event => {
+                if (event.candidate !== null) return;
+                print('To make a connection:')
+                print('1. Send the following URL to the other person.')
+                print('2. Type the result in the bottom text field.');
+                print('');
+                print(window.location.href + '#' + encodeURIComponent(JSON.stringify(connection.localDescription)));
+            };
+
+            const input = document.getElementById('input');
+            input.onkeypress = event => {
+                if (event.key !== 'Enter') return;
+                connection.setRemoteDescription(JSON.parse(input.value));
+                input.value = '';
+                input.onkeypress = undefined;
+                return false;
+            }
+        }
+
+        async function runGuest(connection, offerString) {
+            const offer = JSON.parse(decodeURIComponent(offerString));
+            connection.setRemoteDescription(new RTCSessionDescription(offer));
+            connection.setLocalDescription(await connection.createAnswer());
+            connection.onicecandidate = event => {
+                if (event.candidate !== null) return;
+                print('To make a connection, send the following string to the other person.');
+                print('');
+                print(JSON.stringify(connection.localDescription));
+            };
+            connection.ondatachannel = event => {
+                event.channel.onopen = onConnectionEstablished(event.channel);
+            };
+        }
+
+        function onConnectionEstablished(dataChannel) {
+            print('Connection established.');
+            dataChannel.onmessage = event => print('Received : ' + event.data);
+            const input = document.getElementById('input');
+            input.onkeypress = event => {
+                if (event.key !== 'Enter') return;
+                dataChannel.send(input.value);
+                print('Sent: ' + input.value);
+                input.value = '';
+                return false;
+            }
+        }
+
+        window.onerror = (message, source, lineno, colno, error) => {
+            print(error.stack);
+            print('Session aborted. Refresh to start a new session.')
+            input.onkeypress = undefined;
+        };
+
+        const connection = new RTCPeerConnection({ 'iceServers': [{ 'urls': ['stun:stun.l.google.com:19302'] }] });
+
+        if (window.location.hash)
+            runGuest(connection, window.location.hash.substring(1));
+        else
+            runHost(connection);
+    </script>
+</body>
+
+</html>
