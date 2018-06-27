@@ -10,7 +10,9 @@
     <textarea id='input' style='resize:none' rows='3'></textarea>
     <script>
         function print(str) {
-            document.getElementById('output').append(str + '\r\n');
+            const output = document.getElementById('output');
+            output.append(str + '\r\n');
+            output.scrollTop = output.scrollHeight;
         }
 
         async function runHost(connection) {
