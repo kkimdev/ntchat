@@ -10,8 +10,7 @@
     <textarea id='input' style='resize:none' rows='3'></textarea>
     <script>
         function print(str) {
-            const newLine = `[${new Date().toLocaleTimeString()}] ${str}\r\n`;
-            document.getElementById('output').append(newLine);
+            document.getElementById('output').append(str + '\r\n');
         }
 
         async function runHost(connection) {
