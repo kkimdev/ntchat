@@ -1,12 +1,10 @@
 <!doctype html>
 <html lang='en' style='height:100%'>
 <head><title>Never Trust Chat</title></head>
-
 <body style='display:flex; flex-direction:column; height:100%; margin:0'>
     <div><h1>Never Trust Chat</h1></div>
     <textarea id='output' style='flex-grow:1; resize:none' readonly></textarea>
     <textarea id='input' style='resize:none' rows='3'></textarea>
-
     <script>
         function print(str) {
             const newLine = `[${new Date().toLocaleTimeString()}] ${str}\r\n`;
@@ -79,5 +77,4 @@
             runHost(connection);
     </script>
 </body>
-
 </html>
