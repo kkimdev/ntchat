@@ -1,1 +1,1 @@
-# never-trust-chat
+# Never Trust Chat
