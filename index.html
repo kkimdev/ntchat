@@ -67,6 +67,7 @@
             }
         }
 
+        window.onhashchange = () => location.reload();
         window.onerror = (message, source, lineno, colno, error) => {
             print(error.stack);
             print('Session aborted. Refresh to start a new session.')
