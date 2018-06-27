@@ -30,9 +30,10 @@
             };
 
             document.getElementById('form').onsubmit = event => {
-                document.getElementById('form').onsubmit = undefined;
                 event.preventDefault();
                 const input = document.getElementById('input');
+                if (input.value === '') return;
+                document.getElementById('form').onsubmit = undefined;
                 connection.setRemoteDescription(JSON.parse(input.value));
                 input.value = '';
             };
@@ -59,6 +60,7 @@
             document.getElementById('form').onsubmit = event => {
                 event.preventDefault();
                 const input = document.getElementById('input');
+                if (input.value === '') return;
                 dataChannel.send(input.value);
                 print('Sent: ' + input.value);
                 input.value = '';
