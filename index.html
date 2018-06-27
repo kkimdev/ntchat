@@ -7,7 +7,7 @@
 <body style='display:flex; flex-direction:column; height:100%; margin:0'>
     <div><h1>Never Trust Chat</h1></div>
     <textarea id='output' style='flex-grow:1; resize:none' readonly></textarea>
-    <textarea id='input' style='resize:none' rows='3'></textarea>
+    <form id='form' stye='width:100%'><input id='input' type='text' stye='width:100%'></form>
     <script>
         function print(str) {
             const output = document.getElementById('output');
@@ -29,14 +29,13 @@
                 print(window.location.href + '#' + encodeURIComponent(JSON.stringify(connection.localDescription)));
             };
 
-            const input = document.getElementById('input');
-            input.onkeypress = event => {
-                if (event.key !== 'Enter') return;
+            document.getElementById('form').onsubmit = event => {
+                document.getElementById('form').onsubmit = undefined;
+                event.preventDefault();
+                const input = document.getElementById('input');
                 connection.setRemoteDescription(JSON.parse(input.value));
                 input.value = '';
-                input.onkeypress = undefined;
-                return false;
-            }
+            };
         }
 
         async function runGuest(connection, offerString) {
@@ -57,20 +56,19 @@
         function onConnectionEstablished(dataChannel) {
             print('Connection established.');
             dataChannel.onmessage = event => print('Received : ' + event.data);
-            const input = document.getElementById('input');
-            input.onkeypress = event => {
-                if (event.key !== 'Enter') return;
+            document.getElementById('form').onsubmit = event => {
+                event.preventDefault();
+                const input = document.getElementById('input');
                 dataChannel.send(input.value);
                 print('Sent: ' + input.value);
                 input.value = '';
-                return false;
             }
         }
 
         window.onerror = (message, source, lineno, colno, error) => {
             print(error.stack);
             print('Session aborted. Refresh to start a new session.')
-            input.onkeypress = undefined;
+            document.getElementById('form').onsubmit = undefined;
         };
 
         const connection = new RTCPeerConnection({ 'iceServers': [{ 'urls': ['stun:stun.l.google.com:19302'] }] });
