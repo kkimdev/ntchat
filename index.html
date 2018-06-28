@@ -20,8 +20,9 @@
             const dataChannel = connection.createDataChannel(null);
             dataChannel.onopen = event => onConnectionEstablished(dataChannel);
             connection.setLocalDescription(await connection.createOffer());
-            connection.onicecandidate = event => {
-                if (event.candidate !== null) return;
+            connection.oniceconnectionstatechange = () => print('Connection status: ' + connection.iceConnectionState);
+            connection.onicegatheringstatechange = () => {
+                if (connection.iceGatheringState !== 'complete') return;
                 print('To make a connection:')
                 print('1. Send the following URL to the other person.')
                 print('2. Type the result in the bottom text field.');
@@ -42,8 +43,9 @@
             const offer = JSON.parse(decodeURIComponent(offerString));
             connection.setRemoteDescription(new RTCSessionDescription(offer));
             connection.setLocalDescription(await connection.createAnswer());
-            connection.onicecandidate = event => {
-                if (event.candidate !== null) return;
+            connection.oniceconnectionstatechange = () => print('Connection status: ' + connection.iceConnectionState);
+            connection.onicegatheringstatechange = () => {
+                if (connection.iceGatheringState !== 'complete') return;
                 print('To make a connection, send the following string to the other person.');
                 print('');
                 print(JSON.stringify(connection.localDescription));
@@ -54,7 +56,6 @@
         }
 
         function onConnectionEstablished(dataChannel) {
-            print('Connection established.');
             dataChannel.onmessage = event => print('Received : ' + event.data);
             const input = document.getElementById('input');
             input.onkeypress = event => {
