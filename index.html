@@ -7,7 +7,7 @@
 <body style='display:flex; flex-direction:column; height:100%; margin:0'>
     <div><h1>Never Trust Chat</h1></div>
     <textarea id='output' style='flex-grow:1; resize:none' readonly></textarea>
-    <textarea id='input' style='resize:none' rows='3'></textarea>
+    <input id='input' type='text'></textarea>
     <script>
         function print(str) {
             const output = document.getElementById('output');
@@ -35,7 +35,6 @@
                 connection.setRemoteDescription(JSON.parse(input.value));
                 input.value = '';
                 input.onkeypress = undefined;
-                return false;
             }
         }
 
@@ -63,7 +62,6 @@
                 dataChannel.send(input.value);
                 print('Sent: ' + input.value);
                 input.value = '';
-                return false;
             }
         }
 
