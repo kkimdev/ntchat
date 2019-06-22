@@ -1,6 +1,5 @@
 # Never Trust Chat
-- Website: [ntchat.org](https://ntchat.org)
-- Demo: https://www.youtube.com/watch?v=hPI92JVU1ZA
+Demo: https://www.youtube.com/watch?v=hPI92JVU1ZA
 
 This is a serverless p2p end-to-end encrypted chat app implemented in only one tiny file, [index.tml](https://github.com/kkimdev/ntchat/blob/master/index.html).  There is no external files to load, and there is no server, thus you can easily audit the code and verify that your chat is properly secured.
 
